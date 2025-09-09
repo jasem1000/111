@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مختبر المجهر الطبي - نموذج التحاليل الطبية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            padding-bottom: 120px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            border-radius: 50%;
+            color: white;
+            font-size: 40px;
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
+        .header h1 {
+            color: #2c7da0;
+            font-size: xx-large;
+            font-weight: bolder;
+            margin-bottom: 5px;
+            font-family: 'Amiri', serif;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: 2px;
+        }
+
+        .patient-info {
+            font-size: small;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .info-item {
+            font-size: small;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #2c7da0;
+        }
+
+        .editable-field {
+            font-weight: bold;
+            font-size: small;
+            border: 1px dashed #4CAF50;
+            padding: 4px 8px;
+            border-radius: 4px;
+            min-width: 120px;
+            text-align: right;
+            background-color: white;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .editable-field:focus {
+            outline: none;
+            border: 1px solid #2E7D32;
+            background-color: #f0fff0;
+        }
+
+        .results-container {
+            font-size: larger;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .section {
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fff;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            padding: 10px 15px;
+            font-size: 23px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            direction: ltr;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 6px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #2c7da0;
+        }
+
+        .test-name {
+            font-size: x-large;
+            font-weight: bold;
+            background-color: #e8f4e8;
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        .normal-range {
+            font-size: larger;
+            font-weight: bold;
+            color: #b90f0f;
+            direction: ltr;
+        }
+
+        .result-input {
+            width: 100%;
+            border: 1px dashed #4CAF50;
+            padding: 5px;
+            border-radius: 4px;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+            background-color: #f9f9f9;
+            font-size: 16px;
+            font-weight: bolder;
+            direction: ltr;
+        }
+
+        .result-input:focus {
+            outline: none;
+            border: 1px solid #2E7D32;
+            background-color: #f0fff0;
+        }
+
+        .result-select {
+            width: 100%;
+            border: 1px dashed #4CAF50;
+            padding: 5px;
+            border-radius: 4px;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+            background-color: #f9f9f9;
+            font-size: 13px;
+            cursor: pointer;
+            direction: ltr;
+        }
+
+        .result-select:focus {
+            outline: none;
+            border: 1px solid #2E7D32;
+            background-color: #f0fff0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 2px solid #4CAF50;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .signature-area {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .signature-box {
+            width: 200px;
+            border-top: 1px solid #333;
+            padding-top: 5px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .signature-input {
+            border: none;
+            border-bottom: 1px dashed #333;
+            padding: 3px;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+            width: 100%;
+            margin-top: 3px;
+            font-size: 13px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #f44336 0%, #b71c1c 100%);
+            color: white;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #2c7da0 0%, #1a5e78 100%);
+            color: white;
+        }
+
+        .btn-load {
+            background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);
+            color: white;
+        }
+
+        .btn-manage {
+            background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .lab-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #2c7da0 0%, #1a5e78 100%);
+            padding: 15px;
+            text-align: center;
+            border-top: 2px solid #4CAF50;
+            font-family: 'Cairo', sans-serif;
+            z-index: 1000;
+            color: white;
+        }
+
+        .lab-footer-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .lab-footer-item {
+            padding: 5px;
+        }
+
+        .lab-footer-title {
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .test-selection {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #2c7da0;
+            flex-wrap: wrap;
+        }
+
+        .test-selection label {
+            white-space: nowrap;
+        }
+
+        .test-selection select {
+            padding: 8px 12px;
+            border: 1px solid #4CAF50;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+        }
+
+        .test-selection select:focus {
+            outline: none;
+            border-color: #2E7D32;
+            box-shadow: 0 0 5px rgba(46, 125, 50, 0.5);
+        }
+
+        /* Print Styles for Thermal Printer 80mm */
+        @media print {
+            @page {
+                size: 80mm auto;
+                margin: 0;
+            }
+            
+            body {
+                width: 80mm;
+                max-width: 80mm;
+                margin: 0;
+                padding: 2mm;
+                font-size: 10px !important;
+                font-family: 'Arial Narrow', Arial, sans-serif !important;
+            }
+            
+            .container {
+                width: 76mm;
+                max-width: 76mm;
+                padding: 1mm;
+                box-shadow: none;
+                border: none;
+            }
+            
+            .header h1 {
+                font-size: 14px !important;
+            }
+            
+            .patient-info {
+                font-size: 9px !important;
+                grid-template-columns: 1fr !important;
+                gap: 2px;
+            }
+            
+            .info-item {
+                font-size: 9px !important;
+                padding: 1px 0;
+            }
+            
+            .editable-field {
+                font-size: 9px !important;
+                min-width: 60px;
+                padding: 1px 3px;
+            }
+            
+            .section-title {
+                font-size: 11px !important;
+                padding: 3px 5px;
+            }
+            
+            table {
+                font-size: 9px !important;
+            }
+            
+            th, td {
+                padding: 2px 3px;
+            }
+            
+            .test-name {
+                font-size: 10px !important;
+            }
+            
+            .normal-range {
+                font-size: 9px !important;
+            }
+            
+            .result-input, .result-select {
+                font-size: 9px !important;
+                padding: 2px;
+            }
+            
+            .footer, .signature-area {
+                font-size: 8px !important;
+                margin-top: 5px;
+            }
+            
+            .signature-box {
+                width: 70px;
+                font-size: 8px;
+            }
+            
+            .lab-footer {
+                display: none !important;
+            }
+            
+            .watermark {
+                font-size: 30px !important;
+            }
+            
+            /* Hide unnecessary elements in print */
+            .no-print, .action-buttons, .test-selection {
+                display: none !important;
+            }
+            
+            /* Show all sections in print */
+            .section {
+                display: block !important;
+                page-break-inside: avoid;
+            }
+
+            /* Hide empty rows and sections */
+            .no-print-row {
+                display: none;
+            }
+            .no-print-section {
+                display: none;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+
+            .patient-info {
+                grid-template-columns: 1fr;
+            }
+
+            .lab-footer-content {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+        }
+
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 60px;
+            color: rgba(0, 0, 0, 0.03);
+            pointer-events: none;
+            z-index: -1;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .examiner-name {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #e8f4e8;
+            border-top: 1px solid #ddd;
+            font-weight: bold;
+            direction: ltr;
+        }
+
+        .examiner-input {
+            border: 1px dashed #4CAF50;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-align: left;
+            font-family: 'Cairo', sans-serif;
+            width: 200px;
+            background-color: white;
+        }
+
+        .sub-section-title {
+            background-color: #e8f4e8;
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            direction: ltr;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 10px;
+            direction: rtl;
+        }
+
+        .close {
+            color: #aaa;
+            float: left;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        .normal-range-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .range-management {
+            margin: 15px 0;
+        }
+
+        .range-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .range-table th, .range-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .range-table th {
+            background-color: #f2f2f2;
+        }
+
+        .btn-manage {
+            background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+            color: white;
+        }
+
+        .add-test-btn {
+            background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .add-section-btn {
+            background: linear-gradient(135deg, #9C27B0 0%, #6A1B9A 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+        }
+
+        .test-controls {
+            display: flex;
+            justify-content: flex-end;
+            padding: 5px 10px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .remove-test {
+            color: #f44336;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+        }
+
+        .modal-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .modal-tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .modal-tab.active {
+            border-bottom: 3px solid #4CAF50;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .new-test-form, .new-section-form {
+            display: grid;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .form-group {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .test-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .test-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .test-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-type-options {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .result-type-options input[type="radio"] {
+            margin-right: 5px;
+        }
+        
+        /* أنماط جديدة للخيارات المتعددة */
+        .multi-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .option-checkbox {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .option-checkbox input {
+            margin-left: 3px;
+        }
+        
+        .custom-options-container {
+            margin-top: 5px;
+            padding: 5px;
+            border: 1px dashed #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        
+        .add-option-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="watermark">مختبر المجهر الطبي</div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-microscope"></i>
+                </div>
+                <div class="header-text">
+                    <h1>مختبر المجهر الطبي</h1>
+                </div>
+            </div>
+        </div>
+        
+        <div class="patient-info" id="patientInfoSection">
+            <div class="info-item">
+                <span class="info-label">اسم المريض:</span>
+                <input type="text" class="editable-field" value="" id="patientName" placeholder="اسم المريض">
+            </div>
+            <div class="info-item">
+                <span class="info-label">العمر:</span>
+                <input type="text" class="editable-field" value="" id="patientAge" placeholder="العمر">
+            </div>
+            <div class="info-item">
+                <span class="info-label">الجنس:</span>
+                <input type="text" class="editable-field" value="" id="patientGender" placeholder="الجنس">
+            </div>
+            <div class="info-item">
+                <span class="info-label">تاريخ الإجراء:</span>
+                <input type="text" class="editable-field" id="currentDate">
+            </div>
+            <div class="info-item">
+                <span class="info-label">الطبيب المعالج:</span>
+                <input type="text" class="editable-field" value="" id="doctorName" placeholder="اسم الطبيب">
+            </div>
+        </div>
+        <div class="test-selection no-print">
+            <label for="test-select">اختر قسم التحليل:</label>
+            <select id="test-select" onchange="showSelectedSection()"></select>
+            <button class="add-section-btn" onclick="openAddSectionModal()">
+                <i class="fas fa-plus"></i> إضافة قسم جديد
+            </button>
+        </div>
+
+        <div class="action-buttons no-print">
+            <button class="btn btn-print" onclick="printPage()">
+                <i class="fas fa-print"></i> طباعة التقرير
+            </button>
+            <button class="btn btn-save" onclick="savePatientData()">
+                <i class="fas fa-save"></i> حفظ البيانات
+            </button>
+            <button class="btn btn-load" onclick="loadPatientData()">
+                <i class="fas fa-search"></i> بحث واستعادة
+            </button>
+            <button class="btn btn-clear" onclick="clearAllFields()">
+                <i class="fas fa-trash"></i> مسح الكل
+            </button>
+            <button class="btn btn-manage" onclick="openRangeManager()">
+                <i class="fas fa-cog"></i> إدارة النطاقات
+            </button>
+        </div>
+        
+        <div class="results-container">
+        </div>
+        
+        <div class="footer">
+            <div class="signature-area">
+            </div>
+        </div>
+    </div>
+            
+    <div id="addSectionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddSectionModal()">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 20px;">إضافة قسم وتحاليل جديدة</h2>
+            
+            <div class="modal-tabs">
+                <div class="modal-tab active" onclick="switchTab('add-section-tab')">إضافة قسم جديد</div>
+                <div class="modal-tab" onclick="switchTab('add-test-tab')">إضافة تحليل لقسم موجود</div>
+            </div>
+            
+            <div id="add-section-tab" class="tab-content active">
+                <div class="new-section-form">
+                    <div class="form-group">
+                        <label>اسم القسم:</label>
+                        <input type="text" id="new-section-name" class="form-input" placeholder="أدخل اسم القسم">
+                    </div>
+                    <div class="form-group">
+                        <label>أيقونة القسم:</label>
+                        <select id="new-section-icon" class="form-input">
+                            <option value="fas fa-vial">أنبوب اختبار</option>
+                            <option value="fas fa-tint">دم</option>
+                            <option value="fas fa-flask">قارورة</option>
+                            <option value="fas fa-microscope">ميكروسكوب</option>
+                            <option value="fas fa-prescription-bottle">زجاجة دواء</option>
+                            <option value="fas fa-chart-pie">رسم بياني</option>
+                        </select>
+                    </div>
+                    <h3>تحاليل القسم:</h3>
+                    <div id="new-section-tests">
+                        <div class="test-item" id="test-0">
+                            <input type="text" class="form-input test-name-input" placeholder="اسم التحليل">
+                            <input type="text" class="form-input test-range-input" placeholder="النطاق الطبيعي">
+                            <div class="result-type-options">
+                                <label><input type="radio" name="resultType_0" value="text" checked> Text</label>
+                                <label><input type="radio" name="resultType_0" value="posneg"> P/N</label>
+                                <label><input type="radio" name="resultType_0" value="custom"> Custom</label>
+                            </div>
+                            <div class="custom-options-container" id="options-0" style="display:none;">
+                                <div class="option-checkbox">
+                                    <label for="option-0-1">
+                                        <input type="text" value="Normal" placeholder="اسم الخيار" 
+                                            style="border: none; border-bottom: 1px dashed #ccc; padding: 2px; width: 80px;">
+                                    </label>
+                                    <button onclick="removeOption(this)" style="background: #f44336; color: white; border: none; border-radius: 2px; padding: 1px 4px; margin-right: 5px; cursor: pointer;">×</button>
+                                </div>
+                            </div>
+                            <button class="add-option-btn" onclick="addMultiOption('0')" style="display:none;">+ إضافة خيار</button>
+                            <span class="remove-test" onclick="removeNewTest(this)">×</span>
+                        </div>
+                    </div>
+                    <button class="add-test-btn" onclick="addNewTestField()">
+                        <i class="fas fa-plus"></i> إضافة تحليل
+                    </button>
+                    <button class="btn btn-save" onclick="saveNewSection()">
+                        <i class="fas fa-save"></i> حفظ القسم الجديد
+                    </button>
+                </div>
+            </div>
+            
+            <div id="add-test-tab" class="tab-content">
+                <div class="new-test-form">
+                    <div class="form-group">
+                        <label>اختر القسم:</label>
+                        <select id="existing-sections" class="form-input"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>اسم التحليل:</label>
+                        <input type="text" id="new-test-name" class="form-input" placeholder="أدخل اسم التحليل">
+                    </div>
+                    <div class="form-group">
+                        <label>النطاق الطبيعي:</label>
+                        <input type="text" id="new-test-range" class="form-input" placeholder="أدخل النطاق الطبيعي">
+                    </div>
+                    <div class="form-group">
+                        <label>نوع النتيجة:</label>
+                        <div class="result-type-options">
+                            <label><input type="radio" name="addResultType" value="text" checked> Text</label>
+                            <label><input type="radio" name="addResultType" value="posneg"> Positive/Negative</label>
+                            <label><input type="radio" name="addResultType" value="custom"> Custom</label>
+                        </div>
+                    </div>
+                    <div class="form-group" id="custom-options-group" style="display: none;">
+                        <label>الخيارات المخصصة:</label>
+                        <input type="text" id="custom-options" class="form-input" placeholder="e.g., Normal, High, Low">
+                    </div>
+                    <button class="btn btn-save" onclick="saveNewTest()">
+                        <i class="fas fa-save"></i> إضافة التحليل
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="rangeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRangeManager()">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 20px;">إدارة النطاقات الطبيعية للتحاليل</h2>
+            
+            <div class="range-management">
+                <div style="margin-bottom: 15px;">
+                    <label for="sectionSelect">اختر قسم التحليل:</label>
+                    <select id="sectionSelect" onchange="loadSectionRanges()"></select>
+                </div>
+                
+                <div id="rangeTableContainer"></div>
+                
+                <div style="text-align: left; margin-top: 20px;">
+                    <button class="btn btn-save" onclick="saveRanges()">
+                        <i class="fas fa-save"></i> حفظ التعديلات
+                    </button>
+                    <button class="btn btn-clear" onclick="closeRangeManager()">
+                        <i class="fas fa-times"></i> إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="lab-footer">
+        <div class="lab-footer-content">
+            <div class="lab-footer-item">
+                <div class="lab-footer-title">البايلوجي </div>
+                <div>مصطفى علي كريم </div>
+            </div>
+            <div class="lab-footer-item">
+                <div class="lab-footer-title">العنوان</div>
+                <div>     بغداد الشعب شارع الصحة فلكة المجهر    
+                </div>
+            </div>
+            <div class="lab-footer-item">
+                <div class="lab-footer-title">رقم الهاتف</div>
+                <div>07705380953</div>
+            </div>
+        </div>
+    </div>
+
+   <script>
+    const DB_NAME = 'LabDatabase';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'patients';
+    let db;
+    
+    let labStructure = [];
+
+    function initDb() {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = (event) => console.error("IndexedDB error:", event.target.error);
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: 'patientName' });
+            }
+        };
+        request.onsuccess = (event) => {
+            db = event.target.result;
+        };
+    }
+    
+    function loadLabStructure() {
+        const customSections = JSON.parse(localStorage.getItem('customSections')) || {};
+        labStructure = [];
+        for (const sectionId in customSections) {
+            labStructure.push(customSections[sectionId]);
+        }
+        renderLabStructure();
+        updateSelectMenus();
+    }
+
+    function renderLabStructure() {
+        const resultsContainer = document.querySelector('.results-container');
+        resultsContainer.innerHTML = '';
+        
+        if (labStructure.length === 0) {
+            resultsContainer.innerHTML = '<p style="text-align: center;">لا توجد أقسام تحاليل مضافة. يرجى إضافة قسم جديد للبدء.</p>';
+            return;
+        }
+
+        labStructure.forEach(section => {
+            const sectionDiv = document.createElement('div');
+            sectionDiv.id = section.id;
+            sectionDiv.className = 'section';
+            
+            let tableHTML = `
+                <div class="section-title"><i class="${section.icon}"></i> ${section.title}</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>التحليل</th>
+                            <th>النتيجة</th>
+                            <th>النطاق الطبيعي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            section.tests.forEach(test => {
+                let resultInputHTML = '';
+                if (test.resultType === 'posneg') {
+                    resultInputHTML = `<td>
+                        <select class="result-select" data-test-name="${test.name}">
+                            <option value="">اختر</option>
+                            <option value="Positive">Positive</option>
+                            <option value="Negative">Negative</option>
+                        </select>
+                    </td>`;
+                } else if (test.resultType === 'custom' && test.options && test.options.length > 0) {
+                    const optionsHTML = test.options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+                    resultInputHTML = `<td>
+                        <select class="result-select custom-options-select" data-test-name="${test.name}">
+                            <option value="">اختر</option>
+                            ${optionsHTML}
+                        </select>
+                    </td>`;
+                } else {
+                    resultInputHTML = `<td><input type="text" class="result-input" data-test-name="${test.name}" value=""></td>`;
+                }
+                
+                tableHTML += `
+                    <tr>
+                        <td class="test-name">${test.name}</td>
+                        ${resultInputHTML}
+                        <td class="normal-range">${test.range}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `</tbody></table>`;
+            sectionDiv.innerHTML = tableHTML;
+            resultsContainer.appendChild(sectionDiv);
+        });
+        showSelectedSection();
+    }
+
+    function updateSelectMenus() {
+        const testSelect = document.getElementById('test-select');
+        const sectionSelectModal = document.getElementById('sectionSelect');
+        const sectionForNewTestSelect = document.getElementById('existing-sections');
+        
+        testSelect.innerHTML = '';
+        sectionSelectModal.innerHTML = '';
+        sectionForNewTestSelect.innerHTML = '';
+        
+        labStructure.forEach(section => {
+            const option = document.createElement('option');
+            option.value = section.id;
+            option.textContent = section.title;
+            testSelect.appendChild(option);
+            
+            const option2 = option.cloneNode(true);
+            sectionSelectModal.appendChild(option2);
+            
+            const option3 = option.cloneNode(true);
+            sectionForNewTestSelect.appendChild(option3);
+        });
+    }
+    
+    function openRangeManager() {
+        document.getElementById('rangeModal').style.display = 'block';
+        loadSectionRanges();
+    }
+
+    function closeRangeManager() {
+        document.getElementById('rangeModal').style.display = 'none';
+    }
+
+    function loadSectionRanges() {
+        const sectionId = document.getElementById('sectionSelect').value;
+        const selectedSection = labStructure.find(sec => sec.id === sectionId);
+        
+        if (!selectedSection) {
+            document.getElementById('rangeTableContainer').innerHTML = '<p style="text-align: center;">القسم غير موجود.</p>';
+            return;
+        }
+
+        let tableHTML = `
+            <table class="range-table">
+                <tr>
+                    <th>اسم التحليل</th>
+                    <th>النطاق الطبيعي</th>
+                </tr>
+        `;
+        
+        selectedSection.tests.forEach(test => {
+            tableHTML += `
+                <tr>
+                    <td>${test.name}</td>
+                    <td>
+                        <input type="text" class="normal-range-input" 
+                            data-section="${sectionId}" 
+                            data-test="${test.name}" 
+                            value="${test.range}">
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tableHTML += `</table>`;
+        document.getElementById('rangeTableContainer').innerHTML = tableHTML;
+    }
+
+    function saveRanges() {
+        const inputs = document.querySelectorAll('#rangeTableContainer .normal-range-input');
+        const customSections = JSON.parse(localStorage.getItem('customSections')) || {};
+        
+        inputs.forEach(input => {
+            const sectionId = input.dataset.section;
+            const testName = input.dataset.test;
+            const rangeValue = input.value.trim();
+            
+            if (customSections[sectionId]) {
+                const testToUpdate = customSections[sectionId].tests.find(test => test.name === testName);
+                if (testToUpdate) {
+                    testToUpdate.range = rangeValue;
+                }
+            }
+        });
+
+        localStorage.setItem('customSections', JSON.stringify(customSections));
+        loadLabStructure();
+        alert('تم حفظ النطاقات الطبيعية بنجاح!');
+        closeRangeManager();
+    }
+    
+    function openAddSectionModal() {
+        document.getElementById('addSectionModal').style.display = 'block';
+        populateExistingSections();
+        document.getElementById('new-section-tests').innerHTML = `
+            <div class="test-item" id="test-0">
+                <input type="text" class="form-input test-name-input" placeholder="اسم التحليل">
+                <input type="text" class="form-input test-range-input" placeholder="النطاق الطبيعي">
+                <div class="result-type-options">
+                    <label><input type="radio" name="resultType_0" value="text" checked> Text</label>
+                    <label><input type="radio" name="resultType_0" value="posneg"> P/N</label>
+                    <label><input type="radio" name="resultType_0" value="custom"> Custom</label>
+                </div>
+                <div class="custom-options-container" id="options-0" style="display:none;">
+                    <div class="option-checkbox">
+                        <label for="option-0-1">
+                            <input type="text" value="Normal" placeholder="اسم الخيار" 
+                                style="border: none; border-bottom: 1px dashed #ccc; padding: 2px; width: 80px;">
+                        </label>
+                        <button onclick="removeOption(this)" style="background: #f44336; color: white; border: none; border-radius: 2px; padding: 1px 4px; margin-right: 5px; cursor: pointer;">×</button>
+                    </div>
+                </div>
+                <button class="add-option-btn" onclick="addMultiOption('0')" style="display:none;">+ إضافة خيار</button>
+                <span class="remove-test" onclick="removeNewTest(this)">×</span>
+            </div>
+        `;
+        attachResultTypeListeners();
+    }
+    
+    function closeAddSectionModal() {
+        document.getElementById('addSectionModal').style.display = 'none';
+        document.getElementById('new-test-name').value = '';
+        document.getElementById('new-test-range').value = '';
+        document.getElementById('custom-options').value = '';
+        document.querySelector('input[name="addResultType"][value="text"]').checked = true;
+        document.getElementById('custom-options-group').style.display = 'none';
+    }
+    
+    function switchTab(tabId) {
+        document.querySelectorAll('.modal-tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        const tabEl = document.querySelector(`.modal-tab[onclick="switchTab('${tabId}')"]`);
+        if (tabEl) tabEl.classList.add('active');
+        
+        document.getElementById(tabId).classList.add('active');
+    }
+    
+    let testCounter = 1;
+    function addNewTestField() {
+        const newTestHTML = `
+            <div class="test-item" id="test-${testCounter}">
+                <input type="text" class="form-input test-name-input" placeholder="اسم التحليل">
+                <input type="text" class="form-input test-range-input" placeholder="النطاق الطبيعي">
+                <div class="result-type-options">
+                    <label><input type="radio" name="resultType_${testCounter}" value="text" checked> Text</label>
+                    <label><input type="radio" name="resultType_${testCounter}" value="posneg"> P/N</label>
+                    <label><input type="radio" name="resultType_${testCounter}" value="custom"> Custom</label>
+                </div>
+                <div class="custom-options-container" id="options-${testCounter}" style="display:none;">
+                    <div class="option-checkbox">
+                        <label for="option-${testCounter}-1">
+                            <input type="text" value="Normal" placeholder="اسم الخيار" 
+                                style="border: none; border-bottom: 1px dashed #ccc; padding: 2px; width: 80px;">
+                        </label>
+                        <button onclick="removeOption(this)" style="background: #f44336; color: white; border: none; border-radius: 2px; padding: 1px 4px; margin-right: 5px; cursor: pointer;">×</button>
+                    </div>
+                </div>
+                <button class="add-option-btn" onclick="addMultiOption('${testCounter}')" style="display:none;">+ إضافة خيار</button>
+                <span class="remove-test" onclick="removeNewTest(this)">×</span>
+            </div>
+        `;
+        document.getElementById('new-section-tests').insertAdjacentHTML('beforeend', newTestHTML);
+        testCounter++;
+        attachResultTypeListeners();
+    }
+    
+    function attachResultTypeListeners() {
+        document.querySelectorAll('#new-section-tests .result-type-options input[type="radio"]').forEach(radio => {
+            radio.removeEventListener('change', handleRadioChange);
+            radio.addEventListener('change', handleRadioChange);
+        });
+    }
+
+    function handleRadioChange(event) {
+        const testItem = event.target.closest('.test-item');
+        const customContainer = testItem.querySelector('.custom-options-container');
+        const addOptionBtn = testItem.querySelector('.add-option-btn');
+        
+        if (event.target.value === 'custom') {
+            customContainer.style.display = 'block';
+            addOptionBtn.style.display = 'block';
+        } else {
+            customContainer.style.display = 'none';
+            addOptionBtn.style.display = 'none';
+        }
+    }
+
+    function removeNewTest(element) {
+        element.parentElement.remove();
+    }
+    
+    function addMultiOption(testId, optionName = '') {
+        const optionsContainer = document.getElementById(`options-${testId}`);
+        const optionId = `option-${testId}-${Date.now()}`;
+        
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'option-checkbox';
+        optionDiv.innerHTML = `
+            <label for="${optionId}">
+                <input type="text" value="${optionName}" placeholder="اسم الخيار" 
+                    style="border: none; border-bottom: 1px dashed #ccc; padding: 2px; width: 80px;">
+            </label>
+            <button onclick="removeOption(this)" style="background: #f44336; color: white; border: none; border-radius: 2px; padding: 1px 4px; margin-right: 5px; cursor: pointer;">×</button>
+        `;
+        
+        optionsContainer.appendChild(optionDiv);
+    }
+    
+    function removeOption(button) {
+        button.parentElement.remove();
+    }
+    
+    function saveNewSection() {
+        const sectionName = document.getElementById('new-section-name').value.trim();
+        const sectionIcon = document.getElementById('new-section-icon').value;
+        
+        if (!sectionName) {
+            alert('يرجى إدخال اسم للقسم الجديد.');
+            return;
+        }
+        
+        const sectionId = 'customSection_' + Date.now();
+        const testItems = document.querySelectorAll('#new-section-tests .test-item');
+        const tests = [];
+        
+        testItems.forEach((testItem) => {
+            const nameInput = testItem.querySelector('.test-name-input');
+            const rangeInput = testItem.querySelector('.test-range-input');
+            const resultType = testItem.querySelector(`input[type="radio"]:checked`).value;
+            
+            if (nameInput.value.trim() && rangeInput.value.trim()) {
+                const testObj = {
+                    name: nameInput.value.trim(),
+                    range: rangeInput.value.trim(),
+                    resultType: resultType
+                };
+                
+                if (resultType === 'custom') {
+                    testObj.options = [];
+                    const optionInputs = testItem.querySelectorAll('.option-checkbox input[type="text"]');
+                    optionInputs.forEach(input => {
+                        if (input.value.trim()) {
+                            testObj.options.push(input.value.trim());
+                        }
+                    });
+                }
+                
+                tests.push(testObj);
+            }
+        });
+        
+        if (tests.length === 0) {
+            alert('يرجى إدخال تحليل واحد على الأقل للقسم الجديد.');
+            return;
+        }
+        
+        let customSections = JSON.parse(localStorage.getItem('customSections')) || {};
+        customSections[sectionId] = {
+            id: sectionId,
+            title: sectionName,
+            icon: sectionIcon,
+            tests: tests
+        };
+        localStorage.setItem('customSections', JSON.stringify(customSections));
+        
+        loadLabStructure();
+        document.getElementById('test-select').value = sectionId;
+        showSelectedSection();
+        
+        document.getElementById('new-section-name').value = '';
+        closeAddSectionModal();
+        alert('تم إضافة القسم الجديد بنجاح!');
+    }
+    
+    function populateExistingSections() {
+        const existingSectionsSelect = document.getElementById('existing-sections');
+        existingSectionsSelect.innerHTML = '';
+        labStructure.forEach(section => {
+            const option = document.createElement('option');
+            option.value = section.id;
+            option.textContent = section.title;
+            existingSectionsSelect.appendChild(option);
+        });
+    }
+    
+    function saveNewTest() {
+        const sectionId = document.getElementById('existing-sections').value;
+        const testName = document.getElementById('new-test-name').value.trim();
+        const testRange = document.getElementById('new-test-range').value.trim();
+        const resultType = document.querySelector('input[name="addResultType"]:checked').value;
+        
+        if (!testName || !testRange || !sectionId) {
+            alert('يرجى إدخال جميع المعلومات المطلوبة.');
+            return;
+        }
+        
+        let customSections = JSON.parse(localStorage.getItem('customSections')) || {};
+        const section = customSections[sectionId];
+        
+        if (section) {
+            const newTest = {
+                name: testName,
+                range: testRange,
+                resultType: resultType
+            };
+            if (resultType === 'custom') {
+                newTest.options = document.getElementById('custom-options').value.split(',').map(o => o.trim()).filter(o => o);
+            }
+            section.tests.push(newTest);
+            localStorage.setItem('customSections', JSON.stringify(customSections));
+            
+            loadLabStructure();
+            document.getElementById('test-select').value = sectionId;
+            showSelectedSection();
+            
+            closeAddSectionModal();
+            alert('تم إضافة التحليل الجديد بنجاح!');
+        } else {
+            alert('القسم المحدد غير موجود.');
+        }
+    }
+
+    function savePatientData() {
+        const patientName = document.getElementById('patientName').value.trim();
+        if (!patientName) {
+            alert('يرجى إدخال اسم المريض أولاً.');
+            return;
+        }
+
+        const transaction = db.transaction([STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+
+        const patientData = {
+            patientName: patientName,
+            patientAge: document.getElementById('patientAge').value,
+            patientGender: document.getElementById('patientGender').value,
+            currentDate: document.getElementById('currentDate').value,
+            doctorName: document.getElementById('doctorName').value,
+            tests: {}
+        };
+
+        const allSections = document.querySelectorAll('.section');
+        allSections.forEach(section => {
+            const sectionId = section.id;
+            patientData.tests[sectionId] = {};
+            
+            const rows = section.querySelectorAll('tr');
+            rows.forEach(row => {
+                const testNameElement = row.querySelector('.test-name');
+                const resultInput = row.querySelector('.result-input');
+                const resultSelect = row.querySelector('.result-select');
+
+                if (testNameElement) {
+                    const testName = testNameElement.textContent.trim();
+                    let resultValue = '';
+
+                    if (resultInput) {
+                        resultValue = resultInput.value.trim();
+                    } else if (resultSelect) {
+                        resultValue = resultSelect.value;
+                    }
+
+                    if (resultValue) {
+                        patientData.tests[sectionId][testName] = resultValue;
+                    }
+                }
+            });
+        });
+
+        const request = store.put(patientData);
+
+        request.onsuccess = () => {
+            alert('تم حفظ بيانات المريض بنجاح!');
+        };
+
+        request.onerror = (event) => {
+            console.error("Save error:", event.target.error);
+            alert('فشل في حفظ البيانات. يرجى المحاولة مرة أخرى.');
+        };
+    }
+
+    function loadPatientData() {
+        const patientName = prompt('يرجى إدخال اسم المريض للبحث:');
+        if (!patientName) return;
+
+        const transaction = db.transaction([STORE_NAME], 'readonly');
+        const store = transaction.objectStore(STORE_NAME);
+        const request = store.get(patientName);
+
+        request.onsuccess = (event) => {
+            const patientData = event.target.result;
+            if (patientData) {
+                document.getElementById('patientName').value = patientData.patientName || '';
+                document.getElementById('patientAge').value = patientData.patientAge || '';
+                document.getElementById('patientGender').value = patientData.patientGender || '';
+                document.getElementById('currentDate').value = patientData.currentDate || '';
+                document.getElementById('doctorName').value = patientData.doctorName || '';
+
+                document.querySelectorAll('.result-input, .result-select').forEach(input => {
+                    input.value = '';
+                });
+                
+                for (const sectionId in patientData.tests) {
+                    const tests = patientData.tests[sectionId];
+                    for (const testName in tests) {
+                        const testRows = document.querySelectorAll('#' + sectionId + ' .test-name');
+                        for (let row of testRows) {
+                            if (row.textContent.trim() === testName) {
+                                const resultValue = tests[testName];
+                                const input = row.closest('tr').querySelector('.result-input, .result-select');
+                                if (input) {
+                                    input.value = resultValue;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                alert('تم استعادة بيانات المريض بنجاح!');
+            } else {
+                alert('لا توجد بيانات لهذا المريض.');
+            }
+        };
+
+        request.onerror = (event) => {
+            console.error("Load error:", event.target.error);
+            alert('فشل في استعادة البيانات.');
+        };
+    }
+
+    function setCurrentDate() {
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const dateString = now.toLocaleDateString('ar-IQ', options);
+        document.getElementById('currentDate').value = dateString;
+    }
+    
+    function showSelectedSection() {
+        const sections = document.querySelectorAll('.section');
+        const selectedSectionId = document.getElementById('test-select').value;
+        sections.forEach(section => {
+            if (section.id === selectedSectionId) {
+                section.classList.add('active');
+            } else {
+                section.classList.remove('active');
+            }
+        });
+    }
+
+    function clearAllFields() {
+        if(confirm('هل أنت متأكد من أنك تريد مسح جميع الحقول؟')) {
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.value = '';
+            });
+            
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                select.selectedIndex = 0;
+            });
+            
+            setCurrentDate();
+            showSelectedSection();
+        }
+    }
+    
+    function prepareForPrint() {
+        const allSections = document.querySelectorAll('.section');
+        allSections.forEach(section => {
+            section.classList.add('active');
+        });
+
+        // Hide rows with no value
+        const allResultInputs = document.querySelectorAll('.result-input, .result-select');
+        allResultInputs.forEach(input => {
+            const row = input.closest('tr');
+            if ((input.value.trim() === '' || (input.tagName === 'SELECT' && input.value === '')) && row) {
+                row.classList.add('no-print-row');
+            } else {
+                row.classList.remove('no-print-row');
+            }
+        });
+        
+        // Hide sections with no non-empty rows
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+            const visibleRows = section.querySelectorAll('tr:not(.no-print-row)');
+            const hasData = Array.from(visibleRows).some(row => {
+                const input = row.querySelector('.result-input, .result-select');
+                return input && (input.value.trim() !== '' || (input.tagName === 'SELECT' && input.value !== ''));
+            });
+
+            if (!hasData) {
+                section.classList.add('no-print-section');
+            } else {
+                section.classList.remove('no-print-section');
+            }
+        });
+    }
+    
+    function restoreAfterPrint() {
+        const hiddenRows = document.querySelectorAll('.no-print-row');
+        hiddenRows.forEach(row => row.classList.remove('no-print-row'));
+        
+        const hiddenSections = document.querySelectorAll('.no-print-section');
+        hiddenSections.forEach(section => section.classList.remove('no-print-section'));
+        
+        showSelectedSection();
+    }
+    
+    function printPage() {
+        prepareForPrint();
+        window.print();
+        setTimeout(restoreAfterPrint, 1000);
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        setCurrentDate();
+        initDb();
+        loadLabStructure();
+        
+        document.querySelectorAll('input[name="addResultType"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                const resultType = document.querySelector('input[name="addResultType"]:checked').value;
+                document.getElementById('custom-options-group').style.display = resultType === 'custom' ? 'grid' : 'none';
+            });
+        });
+    });
+    </script>
+</body>
+</html>
