@@ -161,6 +161,14 @@
             padding: 8px 6px;
             text-align: center;
         }
+        
+        tr {
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:last-child {
+            border-bottom: none;
+        }
 
         th {
             background-color: #f2f2f2;
@@ -184,7 +192,7 @@
         }
 
         .result-input {
-            width: 100%;
+            width: 60%;
             border: 1px dashed #4CAF50;
             padding: 5px;
             border-radius: 4px;
@@ -383,8 +391,9 @@
                 max-width: 80mm;
                 margin: 0;
                 padding: 2mm;
-                font-size: 10px !important;
+                font-size: 26px !important; /* Increased base font size to match test name */
                 font-family: 'Arial Narrow', Arial, sans-serif !important;
+                color: #333 !important; /* Ensure consistent color */
             }
             
             .container {
@@ -396,60 +405,77 @@
             }
             
             .header h1 {
-                font-size: 14px !important;
+                font-size: 26px !important;
             }
             
             .patient-info {
-                font-size: 9px !important;
+                font-size: 26px !important;
                 grid-template-columns: 1fr !important;
                 gap: 2px;
             }
             
             .info-item {
-                font-size: 9px !important;
+                font-size: 26px !important;
                 padding: 1px 0;
             }
             
             .editable-field {
-                font-size: 9px !important;
+                font-size: 26px !important;
                 min-width: 60px;
                 padding: 1px 3px;
+                color: #333 !important;
             }
             
             .section-title {
-                font-size: 11px !important;
+                font-size: 26px !important;
                 padding: 3px 5px;
             }
             
             table {
-                font-size: 9px !important;
+                font-size: 26px !important;
+                width: 75mm; /* Set a fixed width for the table */
+                margin-top: 5px;
             }
             
             th, td {
-                padding: 2px 3px;
+                padding: 4px 2px;
+            }
+            
+            tr {
+                border-bottom: 1px solid #333; /* Changed from dashed to solid */
+            }
+            
+            tr:last-child {
+                border-bottom: none;
             }
             
             .test-name {
-                font-size: 10px !important;
+                font-size: 26px !important; /* Increased test name font size */
+                color: #333 !important; /* Override background and color for print */
+                background-color: transparent !important;
             }
             
             .normal-range {
-                font-size: 9px !important;
+                font-size: 26px !important; /* Increased normal range font size */
+                color: #333 !important;
             }
             
             .result-input, .result-select {
-                font-size: 9px !important;
+                font-size: 26px !important;
+                font-weight: bolder;
                 padding: 2px;
+                color: #333 !important;
+                background-color: transparent !important;
             }
             
             .footer, .signature-area {
-                font-size: 8px !important;
+                font-size: 26px !important;
                 margin-top: 5px;
             }
             
             .signature-box {
                 width: 70px;
-                font-size: 8px;
+                font-size: 26px;
             }
             
             .lab-footer {
@@ -457,16 +483,20 @@
             }
             
             .watermark {
-                font-size: 30px !important;
+                font-size: 25px !important;
             }
             
             /* Hide unnecessary elements in print */
-            .no-print, .action-buttons, .test-selection {
+            .no-print, .action-buttons, .test-selection, .modal, .footer {
                 display: none !important;
             }
             
-            /* Show all sections in print */
+            /* Show only the active section in print */
             .section {
+                display: none !important;
+            }
+            
+            .section.active {
                 display: block !important;
                 page-break-inside: avoid;
             }
@@ -478,7 +508,6 @@
             .no-print-section {
                 display: none;
             }
-
         }
 
         @media (max-width: 600px) {
@@ -985,17 +1014,23 @@
     let labStructure = [];
 
     function initDb() {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-        request.onerror = (event) => console.error("IndexedDB error:", event.target.error);
-        request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-                db.createObjectStore(STORE_NAME, { keyPath: 'patientName' });
-            }
-        };
-        request.onsuccess = (event) => {
-            db = event.target.result;
-        };
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            request.onerror = (event) => {
+                console.error("IndexedDB error:", event.target.error);
+                reject(event.target.error);
+            };
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME, { keyPath: 'patientName' });
+                }
+            };
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                resolve(db);
+            };
+        });
     }
     
     function loadLabStructure() {
@@ -1454,8 +1489,10 @@
         };
     }
 
-    function loadPatientData() {
-        const patientName = prompt('يرجى إدخال اسم المريض للبحث:');
+    function loadPatientData(patientName = null) {
+        if (!patientName) {
+            patientName = prompt('يرجى إدخال اسم المريض للبحث:');
+        }
         if (!patientName) return;
 
         const transaction = db.transaction([STORE_NAME], 'readonly');
@@ -1491,8 +1528,8 @@
                         }
                     }
                 }
-
                 alert('تم استعادة بيانات المريض بنجاح!');
+                localStorage.setItem('lastPatientName', patientName); // Save for auto-load
             } else {
                 alert('لا توجد بيانات لهذا المريض.');
             }
@@ -1537,50 +1574,50 @@
             
             setCurrentDate();
             showSelectedSection();
+            localStorage.removeItem('lastPatientName');
         }
     }
     
     function prepareForPrint() {
+        // First, hide all sections
+        const allSections = document.querySelectorAll('.section');
+        allSections.forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Then, show only the currently selected section
+        const selectedSectionId = document.getElementById('test-select').value;
+        const selectedSection = document.getElementById(selectedSectionId);
+        if (selectedSection) {
+            selectedSection.classList.add('active');
+        }
+
+        // Hide rows with no value in the active section
+        if (selectedSection) {
+            const allResultInputs = selectedSection.querySelectorAll('.result-input, .result-select');
+            allResultInputs.forEach(input => {
+                const row = input.closest('tr');
+                if ((input.value.trim() === '' || (input.tagName === 'SELECT' && input.value === '')) && row) {
+                    row.classList.add('no-print-row');
+                } else {
+                    row.classList.remove('no-print-row');
+                }
+            });
+        }
+    }
+    
+    function restoreAfterPrint() {
+        // Restore visibility of all sections
         const allSections = document.querySelectorAll('.section');
         allSections.forEach(section => {
             section.classList.add('active');
         });
 
-        // Hide rows with no value
-        const allResultInputs = document.querySelectorAll('.result-input, .result-select');
-        allResultInputs.forEach(input => {
-            const row = input.closest('tr');
-            if ((input.value.trim() === '' || (input.tagName === 'SELECT' && input.value === '')) && row) {
-                row.classList.add('no-print-row');
-            } else {
-                row.classList.remove('no-print-row');
-            }
-        });
-        
-        // Hide sections with no non-empty rows
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(section => {
-            const visibleRows = section.querySelectorAll('tr:not(.no-print-row)');
-            const hasData = Array.from(visibleRows).some(row => {
-                const input = row.querySelector('.result-input, .result-select');
-                return input && (input.value.trim() !== '' || (input.tagName === 'SELECT' && input.value !== ''));
-            });
-
-            if (!hasData) {
-                section.classList.add('no-print-section');
-            } else {
-                section.classList.remove('no-print-section');
-            }
-        });
-    }
-    
-    function restoreAfterPrint() {
+        // Restore visibility of all rows
         const hiddenRows = document.querySelectorAll('.no-print-row');
         hiddenRows.forEach(row => row.classList.remove('no-print-row'));
         
-        const hiddenSections = document.querySelectorAll('.no-print-section');
-        hiddenSections.forEach(section => section.classList.remove('no-print-section'));
-        
+        // Restore the view to show only the selected section
         showSelectedSection();
     }
     
@@ -1590,10 +1627,16 @@
         setTimeout(restoreAfterPrint, 1000);
     }
     
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
         setCurrentDate();
-        initDb();
+        await initDb();
         loadLabStructure();
+
+        // Attempt to auto-load the last patient's data
+        const lastPatientName = localStorage.getItem('lastPatientName');
+        if (lastPatientName) {
+            loadPatientData(lastPatientName);
+        }
         
         document.querySelectorAll('input[name="addResultType"]').forEach(radio => {
             radio.addEventListener('change', () => {
