@@ -63,6 +63,18 @@
         .header-text {
             flex: 1;
         }
+        
+        /* New styles to center the header text under the logo */
+        .logo-container {
+            display: block;
+            margin-bottom: 0;
+        }
+
+        .header-text {
+            flex: none;
+            margin-top: 15px;
+        }
+        /* End of new styles */
 
         .header h1 {
             color: #2c7da0;
@@ -384,7 +396,8 @@
                 margin: 0;
                 padding: 2mm;
                 font-size: 10px !important;
-                font-family: 'Arial Narrow', Arial, sans-serif !important;
+                    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+ !important;
             }
             
             .container {
@@ -396,7 +409,8 @@
             }
             
             .header h1 {
-                font-size: 18px !important;
+                font-size: larger !important;
+                
             }
             
             .patient-info {
@@ -478,6 +492,10 @@
                 display: none;
             }
 
+            /* New style to hide the section title in print */
+            .section-title {
+                display: none !important;
+            }
         }
 
         @media (max-width: 600px) {
@@ -869,8 +887,8 @@
                     <h3>تحاليل القسم:</h3>
                     <div id="new-section-tests">
                         <div class="test-item" id="test-0">
-                            <input type="text" class="form-input test-name-input" placeholder="اسم التحليل">
-                            <input type="text" class="form-input test-range-input" placeholder="النطاق الطبيعي">
+                            <input type="text" class="form-input test-name-input" placeholder="item ">
+                            <input type="text" class="form-input test-range-input" placeholder="N.R ">
                             <div class="result-type-options">
                                 <label><input type="radio" name="resultType_0" value="text" checked> Text</label>
                                 <label><input type="radio" name="resultType_0" value="posneg"> P/N</label>
@@ -905,15 +923,15 @@
                         <select id="existing-sections" class="form-input"></select>
                     </div>
                     <div class="form-group">
-                        <label>اسم التحليل:</label>
+                        <label>item :</label>
                         <input type="text" id="new-test-name" class="form-input" placeholder="أدخل اسم التحليل">
                     </div>
                     <div class="form-group">
-                        <label>النطاق الطبيعي:</label>
+                        <label>N.R :</label>
                         <input type="text" id="new-test-range" class="form-input" placeholder="أدخل النطاق الطبيعي">
                     </div>
                     <div class="form-group">
-                        <label>نوع النتيجة:</label>
+                        <label> R:</label>
                         <div class="result-type-options">
                             <label><input type="radio" name="addResultType" value="text" checked> Text</label>
                             <label><input type="radio" name="addResultType" value="posneg"> Positive/Negative</label>
@@ -1045,7 +1063,7 @@
                         </select>
                     </td>`;
                 } else if (test.resultType === 'custom' && test.options && test.options.length > 0) {
-                    const optionsHTML = test.options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+                    const optionsHTML = test.options.map(opt => <option value="${opt}">${opt}</option>).join('');
                     resultInputHTML = `<td>
                         <select class="result-select custom-options-select" data-test-name="${test.name}">
                             <option value="">اختر</option>
@@ -1053,7 +1071,7 @@
                         </select>
                     </td>`;
                 } else {
-                    resultInputHTML = `<td><input type="text" class="result-input" data-test-name="${test.name}" value=""></td>`;
+                    resultInputHTML = <td><input type="text" class="result-input" data-test-name="${test.name}" value=""></td>;
                 }
                 
                 tableHTML += `
@@ -1065,7 +1083,7 @@
                 `;
             });
             
-            tableHTML += `</tbody></table>`;
+            tableHTML += </tbody></table>;
             sectionDiv.innerHTML = tableHTML;
             resultsContainer.appendChild(sectionDiv);
         });
@@ -1135,7 +1153,7 @@
             `;
         });
         
-        tableHTML += `</table>`;
+        tableHTML += </table>;
         document.getElementById('rangeTableContainer').innerHTML = tableHTML;
     }
 
@@ -1203,7 +1221,7 @@
         document.querySelectorAll('.modal-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         
-        const tabEl = document.querySelector(`.modal-tab[onclick="switchTab('${tabId}')"]`);
+        const tabEl = document.querySelector(.modal-tab[onclick="switchTab('${tabId}')"]);
         if (tabEl) tabEl.classList.add('active');
         
         document.getElementById(tabId).classList.add('active');
@@ -1264,8 +1282,8 @@
     }
     
     function addMultiOption(testId, optionName = '') {
-        const optionsContainer = document.getElementById(`options-${testId}`);
-        const optionId = `option-${testId}-${Date.now()}`;
+        const optionsContainer = document.getElementById(options-${testId});
+        const optionId = option-${testId}-${Date.now()};
         
         const optionDiv = document.createElement('div');
         optionDiv.className = 'option-checkbox';
@@ -1300,7 +1318,7 @@
         testItems.forEach((testItem) => {
             const nameInput = testItem.querySelector('.test-name-input');
             const rangeInput = testItem.querySelector('.test-range-input');
-            const resultType = testItem.querySelector(`input[type="radio"]:checked`).value;
+            const resultType = testItem.querySelector(input[type="radio"]:checked).value;
             
             if (nameInput.value.trim() && rangeInput.value.trim()) {
                 const testObj = {
@@ -1604,6 +1622,3 @@
     </script>
 </body>
 </html>
-
-
-
